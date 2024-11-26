@@ -15,7 +15,7 @@ if __name__ == "__main__":
     os.makedirs(other_folder_path, exist_ok=True)
     if not os.path.exists(db_file_path):
         with open(db_file_path, "w") as file:
-            file.write("{}")
+            file.write("[]")
 
     book_db = BookDatabase(db_file_path)
     book_creator = BookCreator(book_db)
