@@ -4,7 +4,6 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.domain.models.Book import Book
 from src.domain.models.BookDatabase import BookDatabase
-import json
 
 path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "other/testdatabase.json")
 

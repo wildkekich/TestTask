@@ -16,14 +16,14 @@ class ConsoleView:
         print("-" * (sum(column_widths) + 3 * (len(headers) - 1)))
         for book in books:
             if (isinstance(book, Book)):
-                print(row_format.format(book.id, book.author, book.title, book.year, "В наличии" if book.status else "Выдана"))
+                print(row_format.format(book.id, book.author, book.title, book.year, "In stock" if book.status else "Out of stock"))
 
     def react_to_user_interaction(self, message: str, books: List[Book]):
         self.clear_console()
         to_show = f"{message}\n"
         for book in books:
             if(isinstance(book, Book)):
-                to_show += f"{book.id} {book.year} {book.author} {book.title} {'В наличии' if book.status else 'Выдана'}\n"
+                to_show += f"{book.id} {book.year} {book.author} {book.title} {'In stock' if book.status else 'Out of stock'}\n"
         print(to_show)
 
     def show_menu(self):

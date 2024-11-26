@@ -1,5 +1,4 @@
 import os
-import json
 from typing import List
 from .BookSearcher import BookSearcher
 from .BookEditor import BookEditor
@@ -28,6 +27,13 @@ class ConsoleController:
         self.to_show_on_page = 10
         self.page = 1
         self.exit = False
+
+    def main(self):
+        while not self.exit:
+            self.get_user_input()
+            books_to_show = self.book_searcher.by_range(num_from=(self.page - 1) * self.to_show_on_page,
+                                                        num_to=self.page * self.to_show_on_page)
+            self.console_view.show(books_to_show, self.page)
 
     def get_user_input(self):
         try:
@@ -67,12 +73,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
-    def main(self):
-        while not self.exit:
-            self.get_user_input()
-            books_to_show = self.book_searcher.by_range(num_from=(self.page - 1) * self.to_show_on_page,
-                                                        num_to=self.page * self.to_show_on_page)
-            self.console_view.show(books_to_show, self.page)
+
 
     def insert(self, user_command: List[str]):
         try:
