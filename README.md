@@ -1,4 +1,4 @@
 # TestTask
 ТЗ ЕМ Jun Python
 
-Решение находится в master векте
+Решение находится в master ветке
