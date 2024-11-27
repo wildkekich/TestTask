@@ -6,6 +6,7 @@ from .BookCreator import BookCreator
 from .BookDeleter import BookDeleter
 from ..models.BookDatabase import BookDatabase
 from src.views.ConsoleView import ConsoleView
+from src.loggers.loggers import console_logger_wrap
 
 
 class ConsoleController:
@@ -30,15 +31,15 @@ class ConsoleController:
 
     def main(self):
         while not self.exit:
-            self.get_user_input()
+            user_input = input("Execute: ")
+            self.process_user_input(user_input)
             books_to_show = self.book_searcher.by_range(num_from=(self.page - 1) * self.to_show_on_page,
                                                         num_to=self.page * self.to_show_on_page)
             self.console_view.show(books_to_show, self.page)
 
-    def get_user_input(self):
+    @console_logger_wrap
+    def process_user_input(self, user_input):
         try:
-            user_input = input("Execute: ")
-
             if user_input.startswith("exit"):
                 self.exit = True
 
@@ -73,8 +74,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
-
-
+    @console_logger_wrap
     def insert(self, user_command: List[str]):
         try:
             if len(user_command) != 4:
@@ -87,6 +87,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def insert_file(self, user_command: List[str]):
         try:
             if len(user_command) != 2:
@@ -99,12 +100,14 @@ class ConsoleController:
                     for book in books:
                         self.book_creator.create(author=book.author, title=book.title,
                                                  year=book.year, id=book.id, status=book.status)
+                        added.append(book)
             except Exception as e:
                 return f"ERROR. Data in the file doesn't match with json format.{e}"
-            return "SUCCESS.", added
+            return f"SUCCESSFULLY ADDED {len(added)} BOOKS.", added
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def search(self, user_command: List[str]):
         try:
             if len(user_command) != 3:
@@ -124,6 +127,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def edit(self, user_command: List[str]):
         try:
             if len(user_command) == 2:
@@ -147,6 +151,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def delete(self, user_command: List[str]):
         try:
             if len(user_command) != 2:
@@ -156,6 +161,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def next_page(self):
         try:
             if self.page < float(self.book_searcher.get_total()) / float(self.to_show_on_page):
@@ -163,6 +169,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def prev_page(self):
         try:
             if self.page >= 2:
@@ -170,6 +177,7 @@ class ConsoleController:
         except Exception as e:
             raise RuntimeError(f"{e}")
 
+    @console_logger_wrap
     def change_table(self, user_command: List[str]):
         try:
             if len(user_command) == 2:
