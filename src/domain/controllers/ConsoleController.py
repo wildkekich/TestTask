@@ -78,11 +78,13 @@ class ConsoleController:
     def insert(self, user_command: List[str]):
         try:
             if len(user_command) != 4:
-                return "ERROR. Three fields are required for making a new entry.", []
-
-            new_book = self.book_creator.create(author=user_command[1].strip(),
-                                                title=user_command[2].strip(),
-                                                year=int(user_command[3].strip()))
+                return "ERROR. Three(author; title; year) fields are required for making a new entry.", []
+            try:
+                new_book = self.book_creator.create(author=user_command[1].strip(),
+                                                    title=user_command[2].strip(),
+                                                    year=int(user_command[3].strip()))
+            except Exception as e:
+                return "ERROR. Incorrect data.", []
             return "SUCCESS.", [new_book]
         except Exception as e:
             raise RuntimeError(f"{e}")
@@ -102,7 +104,7 @@ class ConsoleController:
                                                  year=book.year, id=book.id, status=book.status)
                         added.append(book)
             except Exception as e:
-                return f"ERROR. Data in the file doesn't match with json format.{e}"
+                return f"ERROR. Data in the file doesn't match with json format.{e}", []
             return f"SUCCESSFULLY ADDED {len(added)} BOOKS.", added
         except Exception as e:
             raise RuntimeError(f"{e}")
@@ -119,8 +121,11 @@ class ConsoleController:
                 found = self.book_searcher.by_title(user_command[2].strip())
                 return "SUCCESS." if len(found) > 0 else "THERE ARE NO MATCHES", found
             if user_command[1].strip().lower() == "year":
-                found = self.book_searcher.by_year(int(user_command[2].strip()))
-                return "SUCCESS." if len(found) > 0 else "THERE ARE NO MATCHES", found
+                try:
+                    found = self.book_searcher.by_year(int(user_command[2].strip()))
+                    return "SUCCESS." if len(found) > 0 else "THERE ARE NO MATCHES", found
+                except Exception as e:
+                    return "ERROR. Incorrect data.", []
             if user_command[1].strip().lower() == "id":
                 found = [self.book_searcher.by_id(user_command[2].strip())]
                 return "SUCCESS." if len(found) > 0 else "THERE ARE NO MATCHES", found
@@ -134,30 +139,34 @@ class ConsoleController:
                 if self.book_editor.edit_status_only(user_command[1].strip()):
                     return "SUCCESSFULLY EDITED.", [self.book_searcher.by_id(user_command[1].strip())]
                 else:
-                    return "DATA WAS NOT FOUND", []
+                    return "ERROR. Data wasn't found.", []
 
             elif len(user_command) == 6:
-                if self.book_editor.edit(id=user_command[1].strip(),
-                                         new_author=user_command[2].strip(),
-                                         new_title=user_command[3].strip(),
-                                         new_year=int(user_command[4].strip()),
-                                         new_status=bool(user_command[5].strip())):
-                    return "SUCCESSFULLY EDITED.", [self.book_searcher.by_id(user_command[1].strip())]
-                else:
-                    return "DATA WAS NOT FOUND", []
+                try:
+                    if self.book_editor.edit(id=user_command[1].strip(),
+                                             new_author=user_command[2].strip(),
+                                             new_title=user_command[3].strip(),
+                                             new_year=int(user_command[4].strip()),
+                                             new_status=True if user_command[5].strip().lower() == "true" else False):
+                        return "SUCCESSFULLY EDITED.", [self.book_searcher.by_id(user_command[1].strip())]
+                    else:
+                        return "DATA WAS NOT FOUND", []
+                except Exception as e:
+                    return "ERROR. Incorrect data.", []
             else:
-                return "ERROR. One(id) or five(id, author, title, year, status)" \
-                       " parameters are requiered for editing an entry", []
+                return "ERROR. One(ID) or five(ID; author; title; year; status)" \
+                       " parameters are requiered for editing an entry.", []
         except Exception as e:
             raise RuntimeError(f"{e}")
 
     @console_logger_wrap
     def delete(self, user_command: List[str]):
+
         try:
             if len(user_command) != 2:
-                return "ERROR. ID parameter is requiered for deleting the entry.", []
+                return "ERROR. ID parameter is requiered for deleting an entry.", []
             result, deleted_book = self.book_deleter.delete(user_command[1].strip())
-            return "SUCCESSFULLY DELETED." if result else "ERROR. DATA NOT FOUND.", [deleted_book]
+            return "SUCCESSFULLY DELETED." if result else "ERROR. Data wasn't found.", [deleted_book]
         except Exception as e:
             raise RuntimeError(f"{e}")
 
@@ -183,4 +192,4 @@ class ConsoleController:
             if len(user_command) == 2:
                 self.to_show_on_page = int(user_command[1])
         except Exception as e:
-            raise RuntimeError(f"{e}")
+            pass

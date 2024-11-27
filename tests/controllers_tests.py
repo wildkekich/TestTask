@@ -20,7 +20,7 @@ book_deleter = BookDeleter(book_db)
 
 
 def cleanup_db():
-    all_books = book_searcher.by_range(0, 200)
+    all_books = book_db.read()
     for book in all_books:
         book_deleter.delete(book.id)
 
