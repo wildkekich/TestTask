@@ -6,7 +6,7 @@
 
 "e" - edit - изменить
 1. изменить параметр "In stock" - (id) - Пример: "e; 0x34f0" 
-2. изменить запись полностью - (id; author; title; year; status) - чтобы поменять запись полностью. Пример: "e; 0x34f0; NewAuthor; Newtitle; 1234; true"
+2. изменить запись полностью - (id; author; title; year; status). Пример: "e; 0x34f0; NewAuthor; Newtitle; 1234; true"
 
 "d" - delete - удалить запись - (id) Пример: "d 0x34f0"
 
